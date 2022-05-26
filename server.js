@@ -44,10 +44,14 @@ const resolvers = {
 const server = new ApolloServer({
     typeDefs,
     resolvers,
-    csrfPrevention: true,
+    csrfPrevention: true,  // see below for more about this
+    cors: {
+        origin: [ "https://www.your-app.example", "https://studio.apollographql.com" ],
+        credentials: true
+    },
 });
 
 // The `listen` method launches a web server.
-server.listen().then(({ url }) => {
+server.listen({ port: process.env.PORT || 4000 }).then(({ url }) => {
     console.log(`🚀  Server ready at ${url}`);
 });
