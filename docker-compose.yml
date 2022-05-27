@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  mongodb:
+    image: mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: graph
+      MONGO_INITDB_ROOT_PASSWORD: ql
+  app:
+    depends_on:
+      - mongodb
+    build: .
+    restart: unless-stopped
+    ports:
+      - 7001:4000
+    environment:
+      MONGO_URI: mongodb://graph:ql@mongodb/
+      PORT: 4000
