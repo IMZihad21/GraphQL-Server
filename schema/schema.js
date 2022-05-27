@@ -30,14 +30,15 @@ const Mutation = new GraphQLObjectType({
                 password: { type: GraphQLString },
             },
             resolve(parent, args) {
-                userData.push({
+                const payload = {
                     id: userData.length + 1,
                     firstName: args.firstName,
                     lastName: args.lastName,
                     email: args.email,
                     password: args.password,
-                });
-                return args;
+                }
+                userData.push(payload);
+                return payload;
             },
         },
     },

@@ -7,7 +7,7 @@ const server = new ApolloServer({
     schema,
     csrfPrevention: true,  // see below for more about this
     cors: {
-        // origin: [ "https://www.your-app.example", "https://studio.apollographql.com" ],
+        origin: [ "http://localhost:8080", "https://studio.apollographql.com" ],
         credentials: true
     },
 });
