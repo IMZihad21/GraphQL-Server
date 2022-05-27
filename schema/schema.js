@@ -1,3 +1,4 @@
+const { AuthenticationError } = require("apollo-server");
 const {
     GraphQLInt, GraphQLList, GraphQLObjectType,
     GraphQLSchema, GraphQLString
@@ -41,6 +42,26 @@ const Mutation = new GraphQLObjectType({
                 return payload;
             },
         },
+        authentication: {
+            type: UserType,
+            args: {
+                email: { type: GraphQLString },
+                password: { type: GraphQLString },
+            },
+            resolve(parent, args) {
+                const user = userData.find(user => {
+                    if (user.email === args.email && user.password === args.password) {
+                        return user;
+                    }
+                })
+                if (user) {
+                    return user;
+                }
+                else {
+                    throw new AuthenticationError("Invalid Credentials");
+                }
+            }
+        }
     },
 });
 
