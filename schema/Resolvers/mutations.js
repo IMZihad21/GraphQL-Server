@@ -1,7 +1,7 @@
 const { GraphQLObjectType, GraphQLString } = require("graphql");
 const UserType = require("../TypeDefs/UserType");
-const userData = require('../../fakeData/users.json');
 const { AuthenticationError } = require("apollo-server");
+const { UserModel } = require("../../models/Users");
 
 
 const Mutation = new GraphQLObjectType({
@@ -10,25 +10,22 @@ const Mutation = new GraphQLObjectType({
         signup: {
             type: UserType,
             args: {
-                firstName: { type: GraphQLString },
-                lastName: { type: GraphQLString },
+                name: { type: GraphQLString },
                 email: { type: GraphQLString },
                 password: { type: GraphQLString },
             },
-            resolve(parent, args) {
-                const userExists = userData.find(user => user.email === args.email);
+            async resolve(parent, args) {
+                const userExists = await UserModel.findOne({ email: args.email });
                 if (userExists) {
                     throw new AuthenticationError("User with this email already exists");
                 }
                 const payload = {
-                    id: userData.length + 1,
-                    firstName: args.firstName,
-                    lastName: args.lastName,
+                    name: args.name,
                     email: args.email,
                     password: args.password,
                 }
-                userData.push(payload);
-                const { password, ...userReturn } = payload;
+                const newUser = await UserModel.create(payload);
+                const { password, ...userReturn } = newUser.toObject();
                 return userReturn;
             },
         },
@@ -38,14 +35,10 @@ const Mutation = new GraphQLObjectType({
                 email: { type: GraphQLString },
                 password: { type: GraphQLString },
             },
-            resolve(parent, args) {
-                const user = userData.find(user => {
-                    if (user.email === args.email && user.password === args.password) {
-                        return user;
-                    }
-                })
-                if (user) {
-                    const { password, ...userReturn } = user;
+            async resolve(parent, args) {
+                const user = await UserModel.findOne({ email: args.email });
+                if (user && user.password === args.password) {
+                    const { password, ...userReturn } = user.toObject();
                     return userReturn;
                 }
                 else {
