@@ -1,23 +1,8 @@
+const { GraphQLObjectType, GraphQLString } = require("graphql");
+const UserType = require("../TypeDefs/UserType");
+const userData = require('../../fakeData/users.json');
 const { AuthenticationError } = require("apollo-server");
-const {
-    GraphQLInt, GraphQLList, GraphQLObjectType,
-    GraphQLSchema, GraphQLString
-} = require("graphql");
-const userData = require('../fakeData/users.json')
-const UserType = require('./TypeDefs/UserType');
 
-const RootQuery = new GraphQLObjectType({
-    name: "RootQueryType",
-    fields: {
-        getAllUsers: {
-            type: new GraphQLList(UserType),
-            args: { id: { type: GraphQLInt } },
-            resolve(parent, args) {
-                return userData;
-            },
-        },
-    },
-});
 
 const Mutation = new GraphQLObjectType({
     name: "Mutation",
@@ -43,8 +28,8 @@ const Mutation = new GraphQLObjectType({
                     password: args.password,
                 }
                 userData.push(payload);
-                delete payload.password;
-                return payload;
+                const { password, ...userReturn } = payload;
+                return userReturn;
             },
         },
         signin: {
@@ -60,7 +45,8 @@ const Mutation = new GraphQLObjectType({
                     }
                 })
                 if (user) {
-                    return user;
+                    const { password, ...userReturn } = user;
+                    return userReturn;
                 }
                 else {
                     throw new AuthenticationError("Invalid Credentials");
@@ -70,4 +56,4 @@ const Mutation = new GraphQLObjectType({
     },
 });
 
-module.exports = new GraphQLSchema({ query: RootQuery, mutation: Mutation });
+module.exports = Mutation;
