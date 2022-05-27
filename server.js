@@ -10,6 +10,7 @@ dotenv.config();
 
 // read the mongoose connection string from an environment variable
 const MONGO_URI = process.env.MONGO_URI;
+const PORT = process.env.PORT || 4000;
 
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.
@@ -29,7 +30,7 @@ mongoose
     })
     .then(() => {
         // The `listen` method launches a web server.
-        server.listen({ port: process.env.PORT || 4000 }).then(({ url }) => {
+        server.listen({ port: PORT }).then(({ url }) => {
             console.log(`🚀  Server ready at ${url}`);
         });
     })
