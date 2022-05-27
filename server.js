@@ -1,12 +1,10 @@
-import { ApolloServer } from 'apollo-server';
-import typeDefs from './gqlDefs/typeDefs.js';
-import resolvers from './gqlDefs/resolvers.js';
+const { ApolloServer } = require('apollo-server');
+const schema = require('./schema/schema.js');
 
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.
 const server = new ApolloServer({
-    typeDefs,
-    resolvers,
+    schema,
     csrfPrevention: true,  // see below for more about this
     cors: {
         // origin: [ "https://www.your-app.example", "https://studio.apollographql.com" ],
