@@ -22,7 +22,7 @@ const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
     name: "Mutation",
     fields: {
-        createUser: {
+        signup: {
             type: UserType,
             args: {
                 firstName: { type: GraphQLString },
@@ -31,6 +31,10 @@ const Mutation = new GraphQLObjectType({
                 password: { type: GraphQLString },
             },
             resolve(parent, args) {
+                const userExists = userData.find(user => user.email === args.email);
+                if (userExists) {
+                    throw new AuthenticationError("User with this email already exists");
+                }
                 const payload = {
                     id: userData.length + 1,
                     firstName: args.firstName,
@@ -39,10 +43,11 @@ const Mutation = new GraphQLObjectType({
                     password: args.password,
                 }
                 userData.push(payload);
+                delete payload.password;
                 return payload;
             },
         },
-        authentication: {
+        signin: {
             type: UserType,
             args: {
                 email: { type: GraphQLString },
