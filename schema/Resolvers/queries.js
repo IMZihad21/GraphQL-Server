@@ -1,4 +1,6 @@
-const { GraphQLInt, GraphQLList, GraphQLObjectType } = require("graphql");
+const { GraphQLInt, GraphQLList, GraphQLObjectType, GraphQLString } = require("graphql");
+const { default: mongoose } = require("mongoose");
+const { UserModel } = require("../../models/Users");
 const UserType = require("../TypeDefs/UserType");
 
 
@@ -7,11 +9,19 @@ const RootQuery = new GraphQLObjectType({
     fields: {
         getAllUsers: {
             type: new GraphQLList(UserType),
-            args: { id: { type: GraphQLInt } },
-            resolve(parent, args) {
-                return userData;
+            async resolve(parent, args) {
+                const users = await UserModel.find({});
+                return users;
             },
         },
+        getUser: {
+            type: UserType,
+            args: { id: { type: GraphQLString } },
+            async resolve(parent, args) {
+                const user = await UserModel.findById(mongoose.Types.ObjectId(args.id));
+                return user;
+            }
+        }
     },
 });
 

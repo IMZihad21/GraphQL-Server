@@ -42,7 +42,7 @@ const Mutation = new GraphQLObjectType({
                     return userReturn;
                 }
                 else {
-                    throw new AuthenticationError("Invalid Credentials");
+                    throw new AuthenticationError("Invalid Credentials. Please Try Again!");
                 }
             }
         }
